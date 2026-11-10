@@ -1,5 +1,7 @@
 """Example tests (happy path only). They import only selection_core: the lesson 4 test rule."""
 import pytest
+import copy
+
 
 import selection_core
 
@@ -28,3 +30,11 @@ def test_media_from_another_event_is_rejected(sample_event):
         selection_core.submit_selection(
             sample_event, "cli_100", ["med_9"], ["add_to_album"])
     assert err.value.code == "MEDIA_NOT_IN_EVENT"
+
+@pytest.mark.req("REQ-SEL-04")
+def test_rejected_selection_leaves_event_unchanged(sample_event):
+    before = copy.deepcopy(sample_event)
+    with pytest.raises(selection_core.SelectionError):
+        selection_core.submit_selection(
+            sample_event, "cli_100", ["med_9"], ["add_to_album"])
+    assert sample_event == before    

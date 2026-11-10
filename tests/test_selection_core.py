@@ -38,10 +38,17 @@ def test_rejected_selection_leaves_event_unchanged(sample_event):
         selection_core.submit_selection(
             sample_event, "cli_100", ["med_9"], ["add_to_album"])
     assert sample_event == before 
-      
+
 @pytest.mark.req("REQ-SEL-05")
 def test_duplicate_media_is_rejected(sample_event):
     with pytest.raises(selection_core.SelectionError) as err:
         selection_core.submit_selection(
             sample_event, "cli_100", ["med_1", "med_1"], ["add_to_album"])
-    assert err.value.code == "DUPLICATE_MEDIA"     
+    assert err.value.code == "DUPLICATE_MEDIA"
+
+@pytest.mark.req("REQ-SEL-06")
+def test_other_client_is_forbidden(sample_event):
+    with pytest.raises(selection_core.SelectionError) as err:
+        selection_core.submit_selection(
+            sample_event, "cli_200", ["med_1"], ["add_to_album"])
+    assert err.value.code == "FORBIDDEN"         
